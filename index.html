@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>From Jay to Kanishka 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#fff0f4;
+      --pink:#ff7aa2;
+      --deep:#e8436f;
+      --white:#fff;
+      --card:#fff7fb;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg, #fff0f4 0%, #fff 60%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      overflow:hidden;
+      color:#333;
+    }
+
+    /* floating hearts */
+    .hearts{position:fixed;inset:0;pointer-events:none;z-index:0;}
+    .heart{position:absolute;opacity:0.9;font-size:18px;transform:translateY(0);animation:floatUp linear infinite;}
+    @keyframes floatUp{from{transform:translateY(0) scale(1);opacity:0.9} to{transform:translateY(-120vh) scale(1.5);opacity:0}}
+
+    .stage{
+      position:relative;
+      width:100%;
+      max-width:720px;
+      text-align:center;
+      z-index:2;
+    }
+
+    /* balloon */
+    .balloon-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .balloon{
+      width:220px;height:300px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: radial-gradient(circle at 30% 25%, #ffd2e0 0%, #ff8db1 50%, #ff6b96 100%);
+      display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 18px 40px rgba(232,67,111,0.18);
+      cursor:pointer;transition:transform .25s ease;transform-origin:center bottom;
+    }
+    .balloon:after{content:'';position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:6px;height:26px;background:linear-gradient(#ffd6e4,#ff9db7);border-radius:3px}
+    .balloon .label{font-family:'Great Vibes', cursive;font-size:34px;color:var(--white);text-shadow:0 6px 18px rgba(0,0,0,0.12)}
+    .tap{font-weight:600;color:#8b2d45}
+
+    /* pop effect */
+    .popped{animation:pop .45s forwards}
+    @keyframes pop{0%{transform:scale(1)} 60%{transform:scale(1.12)} 100%{transform:scale(1.9) translateY(-20px);opacity:0}}
+
+    /* gift */
+    .gift{
+      width:160px;height:140px;margin:18px auto 0;border-radius:10px;background:linear-gradient(180deg,#fff0f4,#ffdfff);
+      border:4px solid rgba(255,120,150,0.15);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;box-shadow:0 10px 30px rgba(220,70,120,0.08);
+      transform-origin:center;opacity:0;transform:translateY(10px) scale(.96);
+      transition:all .6s cubic-bezier(.2,.9,.2,1);
+      cursor:pointer;
+    }
+    .gift.show{opacity:1;transform:translateY(0) scale(1)}
+    .ribbon{position:relative;width:100%;height:18px;background:linear-gradient(90deg,#ff7aa2,#ff4a84);border-top-left-radius:8px;border-top-right-radius:8px}
+    .bow{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:48px;height:28px;border-radius:8px;background:linear-gradient(90deg,#ff6b96,#ff3b74);box-shadow:0 6px 14px rgba(255,80,140,0.16)}
+
+    .gift .text{font-weight:700;color:#7a2340}
+
+    /* letter */
+    .letter-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,0.28);z-index:999;opacity:0;pointer-events:none;transition:opacity .35s}
+    .letter-wrap.show{opacity:1;pointer-events:auto}
+    .letter{
+      max-width:720px;width:100%;background:linear-gradient(180deg,var(--card),#fff);border-radius:12px;box-shadow:0 30px 80px rgba(200,70,120,0.18);padding:28px;
+      transform:translateY(20px);transition:transform .35s;overflow:auto
+    }
+    .letter-wrap.show .letter{transform:translateY(0)}
+    .letter h1{font-family:'Great Vibes',cursive;font-size:44px;margin:6px 0 10px;color:var(--deep);text-align:center}
+    .letter p{font-size:18px;line-height:1.6;color:#4b2b3a}
+    .close-btn{display:inline-block;margin-top:14px;padding:8px 14px;border-radius:999px;background:linear-gradient(90deg,#ff7aa2,#ff4a84);color:#fff;font-weight:700;cursor:pointer}
+
+    /* responsive */
+    @media (max-width:480px){
+      .balloon{width:170px;height:230px}
+      .balloon .label{font-size:26px}
+      .gift{width:140px;height:120px}
+      .letter h1{font-size:34px}
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true"></div>
+
+  <main class="stage">
+    <div class="balloon-wrap">
+      <div id="balloon" class="balloon" role="button" aria-label="Tap to pop balloon">
+        <div class="label">Jay ❤️ Kanishka</div>
+      </div>
+      <div class="tap">Tap to Boom 🎈</div>
+
+      <div id="gift" class="gift" aria-hidden="true">
+        <div class="ribbon"></div>
+        <div class="bow"></div>
+        <div class="text">Tap to Reveal My Feelings 💝</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- overlay letter -->
+  <div id="letterWrap" class="letter-wrap" aria-hidden="true">
+    <div class="letter" role="dialog" aria-label="Love letter">
+      <h1>From Jay to Kanishka 💖</h1>
+      <p>Pyari Kanishka,</p>
+      <p>Jab se maine tumhe dekha, mera dil kuch aur hi tarah dhadakne laga. Tumhari muskaan mere liye subah ki pehli roshni jaisi hai — halke se, meethi si, aur sab kuch sundar bana dene waali. Main tumhe dil se chahta hoon aur aaj yeh chhota sa surprise isi jazbaat ko tum tak pahunchane ke liye hai. Mere sapne tumhare saath hain — hansne ke, chalne ke, aur chhoti chhoti khushiyon ko saath baantne ke.</p>
+      <p>Hamesha tumhara,<br><strong>Jay</strong></p>
+
+      <div style="text-align:center"><button id="closeLetter" class="close-btn">Close</button></div>
+    </div>
+  </div>
+
+  <!-- audio: put your own music file named "music.mp3" in same folder, or replace src with an online url -->
+  <audio id="bgMusic" loop preload="auto">
+    <!-- Example: replace with a royalty-free mp3 URL or keep a file named music.mp3 in the same folder -->
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // generate floating hearts
+    const hearts = document.querySelector('.hearts');
+    function makeHearts(count=12){
+      for(let i=0;i<count;i++){
+        const el = document.createElement('div');
+        el.className='heart';
+        el.textContent='❤️';
+        const size = Math.random()*18 + 14;
+        el.style.left = (Math.random()*100) + '%';
+        el.style.fontSize = size + 'px';
+        el.style.animationDuration = (8 + Math.random()*10) + 's';
+        el.style.bottom = (-Math.random()*30) + 'px';
+        el.style.opacity = 0.9 - Math.random()*0.4;
+        hearts.appendChild(el);
+      }
+    }
+    makeHearts(16);
+
+    // simple pop sound using WebAudio (no external file needed)
+    function playPop(){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(900, ctx.currentTime);
+        g.gain.setValueAtTime(0.0001, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.001);
+        o.connect(g); g.connect(ctx.destination);
+        o.start();
+        o.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+        o.stop(ctx.currentTime + 0.26);
+      }catch(e){console.warn('AudioContext not available',e)}
+    }
+
+    const balloon = document.getElementById('balloon');
+    const gift = document.getElementById('gift');
+    const letterWrap = document.getElementById('letterWrap');
+    const bgMusic = document.getElementById('bgMusic');
+    const closeLetter = document.getElementById('closeLetter');
+
+    let popped=false;
+
+    // try to autoplay music, but browsers may block autoplay with sound
+    function tryPlayMusic(){
+      if(!bgMusic) return;
+      const p = bgMusic.play();
+      if(p!==undefined){
+        p.catch(()=>{/*Autoplay prevented - will play on first user gesture*/});
+      }
+    }
+    // call on load (may be blocked)
+    window.addEventListener('load', ()=>{
+      tryPlayMusic();
+    });
+
+    balloon.addEventListener('click', async function(){
+      if(popped) return;
+      popped=true;
+
+      // play music if not playing
+      try{ if(bgMusic.paused){bgMusic.play().catch(()=>{});} }catch(e){}
+
+      // pop animation & sound
+      balloon.classList.add('popped');
+      playPop();
+
+      // little particle burst
+      burstParticles(balloon);
+
+      // after pop, show gift
+      setTimeout(()=>{
+        balloon.style.display='none';
+        document.querySelector('.tap').style.opacity=0;
+        gift.classList.add('show');
+      },350);
+    });
+
+    gift.addEventListener('click', function(){
+      // animate opening: lift lid (we fake with scale & translate)
+      gift.style.transform = 'translateY(-8px) scale(1.02)';
+      gift.style.boxShadow = '0 30px 70px rgba(220,70,120,0.18)';
+
+      // show letter overlay after a short delay
+      setTimeout(()=>{
+        letterWrap.classList.add('show');
+        letterWrap.setAttribute('aria-hidden','false');
+      },450);
+    });
+
+    closeLetter.addEventListener('click', ()=>{
+      letterWrap.classList.remove('show');
+      letterWrap.setAttribute('aria-hidden','true');
+    });
+
+    // clicking outside letter closes it
+    letterWrap.addEventListener('click',(e)=>{
+      if(e.target===letterWrap) closeLetter.click();
+    });
+
+    // simple burst particles using small hearts
+    function burstParticles(target){
+      const rect = target.getBoundingClientRect();
+      for(let i=0;i<12;i++){
+        const p = document.createElement('div');
+        p.textContent='💖';
+        p.style.position='fixed';
+        p.style.left = (rect.left + rect.width/2) + 'px';
+        p.style.top = (rect.top + rect.height/2) + 'px';
+        p.style.fontSize = (10 + Math.random()*18) + 'px';
+        p.style.zIndex = 999;
+        document.body.appendChild(p);
+        const dx = (Math.random()-0.5)*200;
+        const dy = (Math.random()-1.5)*200;
+        p.animate([
+          {transform:'translate(0,0) scale(1)', opacity:1},
+          {transform:`translate(${dx}px, ${dy}px) scale(${1+Math.random()})`, opacity:0}
+        ], {duration:700 + Math.random()*500, easing:'cubic-bezier(.2,.9,.2,1)'});
+        setTimeout(()=>p.remove(),1200);
+      }
+    }
+
+    // accessibility: make balloon keyboard-activatable
+    balloon.tabIndex = 0;
+    balloon.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') balloon.click(); });
+
+    // small note to user: if music doesn't start automatically, click the balloon once to allow audio.
+  </script>
+</body>
+</html>
